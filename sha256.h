@@ -129,6 +129,15 @@ public:
 
         type w0, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14, w15;
 
+        type oa = a;
+        type ob = b;
+        type oc = c;
+        type od = d;
+        type oe = e;
+        type of = f;
+        type og = g;
+        type oh = h;
+
         round(a, b, c, d, e, f, g, h, vector_add(vector_mirror(0x428a2f98ul), w0 = Instrinsic::load(block, 0)));
         round(h, a, b, c, d, e, f, g, vector_add(vector_mirror(0x71374491ul), w1 = Instrinsic::load(block, 4)));
         round(g, h, a, b, c, d, e, f, vector_add(vector_mirror(0xb5c0fbcful), w2 = Instrinsic::load(block, 8)));
@@ -209,15 +218,14 @@ public:
         round(c, d, e, f, g, h, a, b, vector_add(vector_mirror(0xbef9a3f7ul), vector_inc(w14, sigma1(w12), w7, sigma0(w15))));
         round(b, c, d, e, f, g, h, a, vector_add(vector_mirror(0xc67178f2ul), vector_inc(w15, sigma1(w13), w8, sigma0(w0))));
 
-        // FIXMEBUGBUG: add old abcdefgh
-        a = vector_add(a, vector_mirror(0x6a09e667ul));
-        b = vector_add(b, vector_mirror(0xbb67ae85ul));
-        c = vector_add(c, vector_mirror(0x3c6ef372ul));
-        d = vector_add(d, vector_mirror(0xa54ff53aul));
-        e = vector_add(e, vector_mirror(0x510e527ful));
-        f = vector_add(f, vector_mirror(0x9b05688cul));
-        g = vector_add(g, vector_mirror(0x1f83d9abul));
-        h = vector_add(h, vector_mirror(0x5be0cd19ul));
+        a = vector_add(a, oa);
+        b = vector_add(b, ob);
+        c = vector_add(c, oc);
+        d = vector_add(d, od);
+        e = vector_add(e, oe);
+        f = vector_add(f, of);
+        g = vector_add(g, og);
+        h = vector_add(h, oh);
     }
 
     static void process_trunk(void *out, const void *blocks, int count = 1) {

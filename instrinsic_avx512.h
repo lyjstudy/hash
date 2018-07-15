@@ -9,7 +9,8 @@
 #include <immintrin.h>
 #include "compact.h"
 
-// CPUID Flags: AVX512VL + AVX512F
+// _mm512_rol_epi32 CPUID Flags: AVX512VL + AVX512F
+// _mm512_xxx CPUID Flags: AVX512F
 
 namespace fingera {
 
@@ -71,36 +72,36 @@ public:
             read_be32(trunk, offset + 64 * 15)
         );
     }
-    static inline void save(void *data, int offset, type d) {
+    static inline void save(void *data, int offset, type d, size_t hash_size = 32) {
         char *out = (char *)data;
 
         __m128i v = _mm512_extracti32x4_epi32(d, 3);
-        write_be32(out, offset + 32 * 0, _mm_extract_epi32(v, 3));
-        write_be32(out, offset + 32 * 1, _mm_extract_epi32(v, 2));
-        write_be32(out, offset + 32 * 2, _mm_extract_epi32(v, 1));
-        write_be32(out, offset + 32 * 3, _mm_extract_epi32(v, 0));
-        out += 32 * 4;
+        write_be32(out, offset + hash_size * 0, _mm_extract_epi32(v, 3));
+        write_be32(out, offset + hash_size * 1, _mm_extract_epi32(v, 2));
+        write_be32(out, offset + hash_size * 2, _mm_extract_epi32(v, 1));
+        write_be32(out, offset + hash_size * 3, _mm_extract_epi32(v, 0));
+        out += hash_size * 4;
 
         v = _mm512_extracti32x4_epi32(d, 2);
-        write_be32(out, offset + 32 * 0, _mm_extract_epi32(v, 3));
-        write_be32(out, offset + 32 * 1, _mm_extract_epi32(v, 2));
-        write_be32(out, offset + 32 * 2, _mm_extract_epi32(v, 1));
-        write_be32(out, offset + 32 * 3, _mm_extract_epi32(v, 0));
-        out += 32 * 4;
+        write_be32(out, offset + hash_size * 0, _mm_extract_epi32(v, 3));
+        write_be32(out, offset + hash_size * 1, _mm_extract_epi32(v, 2));
+        write_be32(out, offset + hash_size * 2, _mm_extract_epi32(v, 1));
+        write_be32(out, offset + hash_size * 3, _mm_extract_epi32(v, 0));
+        out += hash_size * 4;
 
         v = _mm512_extracti32x4_epi32(d, 1);
-        write_be32(out, offset + 32 * 0, _mm_extract_epi32(v, 3));
-        write_be32(out, offset + 32 * 1, _mm_extract_epi32(v, 2));
-        write_be32(out, offset + 32 * 2, _mm_extract_epi32(v, 1));
-        write_be32(out, offset + 32 * 3, _mm_extract_epi32(v, 0));
-        out += 32 * 4;
+        write_be32(out, offset + hash_size * 0, _mm_extract_epi32(v, 3));
+        write_be32(out, offset + hash_size * 1, _mm_extract_epi32(v, 2));
+        write_be32(out, offset + hash_size * 2, _mm_extract_epi32(v, 1));
+        write_be32(out, offset + hash_size * 3, _mm_extract_epi32(v, 0));
+        out += hash_size * 4;
 
         v = _mm512_extracti32x4_epi32(d, 0);
-        write_be32(out, offset + 32 * 0, _mm_extract_epi32(v, 3));
-        write_be32(out, offset + 32 * 1, _mm_extract_epi32(v, 2));
-        write_be32(out, offset + 32 * 2, _mm_extract_epi32(v, 1));
-        write_be32(out, offset + 32 * 3, _mm_extract_epi32(v, 0));
-        out += 32 * 4;
+        write_be32(out, offset + hash_size * 0, _mm_extract_epi32(v, 3));
+        write_be32(out, offset + hash_size * 1, _mm_extract_epi32(v, 2));
+        write_be32(out, offset + hash_size * 2, _mm_extract_epi32(v, 1));
+        write_be32(out, offset + hash_size * 3, _mm_extract_epi32(v, 0));
+        out += hash_size * 4;
     }
 };
 

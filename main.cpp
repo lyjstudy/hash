@@ -64,22 +64,33 @@ int main(int argc, char const *argv[]) {
 
     using namespace fingera;
 
-    sha256<instrinsic_one>::process_trunk(&result_hash[0][0], trunk[0]);
-    std::cout << "1 way" << std::endl;
-    dump_buffer(&result_hash[0][0], 32);
+    // ba5ed015715da74cf1e87230ba73d4855edaf6f6
+    // 2becb378925a88317b7721968b810b3436f75b61
+    ripemd160<instrinsic_one>::process_trunk(&result_hash[0][0], trunk[0]);
+    std::cout << "1 way ripemd160" << std::endl;
+    dump_buffer(&result_hash[0][0], 20);
 
+    sha256<instrinsic_one>::process_trunk(&result_hash[0][0], trunk[0]);
+    std::cout << "1 way sha256" << std::endl;
+    dump_buffer(&result_hash[0][0], 32);
+/*
+    ripemd160<instrinsic_two>::process_trunk(&result_hash[1][0], trunk[1]);
+    std::cout << "2 way ripemd160" << std::endl;
+    dump_buffer(&result_hash[1][0], 20);
+    dump_buffer(&result_hash[1][20], 20);
+*/
     sha256<instrinsic_two>::process_trunk(&result_hash[1][0], trunk[1]);
-    std::cout << "2 way" << std::endl;
+    std::cout << "2 way sha256" << std::endl;
     dump_buffer(&result_hash[1][0], 32);
     dump_buffer(&result_hash[1][32], 32);
 
     sha256<instrinsic_sse4>::process_trunk(&result_hash[2][0], trunk[2]);
-    std::cout << "4 way" << std::endl;
+    std::cout << "4 way sha256" << std::endl;
     for (size_t i = 0; i < 4; i++)
         dump_buffer(&result_hash[2][i * 32], 32);
 
     sha256<instrinsic_avx2>::process_trunk(&result_hash[3][0], trunk[3]);
-    std::cout << "8 way" << std::endl;
+    std::cout << "8 way sha256" << std::endl;
     for (size_t i = 0; i < 8; i++)
         dump_buffer(&result_hash[3][i * 32], 32);
 

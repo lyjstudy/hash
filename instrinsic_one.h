@@ -29,6 +29,9 @@ public:
     static inline type vector_and(type x, type y) {
         return x & y;
     }
+    static inline type vector_andnot(type x, type y) {
+        return ~x & y;
+    }
     template<int N>
     static inline type vector_shr(type x) {
         return x >> N;
@@ -45,8 +48,8 @@ public:
     static inline type load(const void *trunk, int offset) {
         return read_be32(trunk, offset + 64 * 0);
     }
-    static inline void save(void *out, int offset, type v) {
-        write_be32(out, offset + 32 * 0, v);
+    static inline void save(void *out, int offset, type v, size_t hash_size = 32) {
+        write_be32(out, offset + hash_size * 0, v);
     }
 };
 
