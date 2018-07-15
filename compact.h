@@ -12,6 +12,12 @@ inline void write_be32(void* ptr, int offset, uint32_t x) {
 inline uint32_t read_be32(const void *ptr, int offset) {
     return be32toh(*(uint32_t *)((char *)ptr + offset));
 }
+inline void write_le32(void* ptr, int offset, uint32_t x) {
+    *(uint32_t *)((char *)ptr + offset) = htole32(x);
+}
+inline uint32_t read_le32(const void *ptr, int offset) {
+    return le32toh(*(uint32_t *)((char *)ptr + offset));
+}
 inline void write_be64(void* ptr, int offset, uint64_t x) {
     *(uint32_t *)((char *)ptr + offset) = htobe64(x);
 }

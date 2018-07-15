@@ -101,7 +101,59 @@ public:
         write_be32(out, offset + hash_size * 1, _mm_extract_epi32(v, 2));
         write_be32(out, offset + hash_size * 2, _mm_extract_epi32(v, 1));
         write_be32(out, offset + hash_size * 3, _mm_extract_epi32(v, 0));
+    }
+
+
+    static inline type load_le(const void *trunk, int offset) {
+        return _mm512_set_epi32(
+            read_le32(trunk, offset + 64 * 0),
+            read_le32(trunk, offset + 64 * 1),
+            read_le32(trunk, offset + 64 * 2),
+            read_le32(trunk, offset + 64 * 3),
+            read_le32(trunk, offset + 64 * 4),
+            read_le32(trunk, offset + 64 * 5),
+            read_le32(trunk, offset + 64 * 6),
+            read_le32(trunk, offset + 64 * 7),
+
+            read_le32(trunk, offset + 64 * 8),
+            read_le32(trunk, offset + 64 * 9),
+            read_le32(trunk, offset + 64 * 10),
+            read_le32(trunk, offset + 64 * 11),
+            read_le32(trunk, offset + 64 * 12),
+            read_le32(trunk, offset + 64 * 13),
+            read_le32(trunk, offset + 64 * 14),
+            read_le32(trunk, offset + 64 * 15)
+        );
+    }
+    static inline void save_le(void *data, int offset, type d, size_t hash_size = 32) {
+        char *out = (char *)data;
+
+        __m128i v = _mm512_extracti32x4_epi32(d, 3);
+        write_le32(out, offset + hash_size * 0, _mm_extract_epi32(v, 3));
+        write_le32(out, offset + hash_size * 1, _mm_extract_epi32(v, 2));
+        write_le32(out, offset + hash_size * 2, _mm_extract_epi32(v, 1));
+        write_le32(out, offset + hash_size * 3, _mm_extract_epi32(v, 0));
         out += hash_size * 4;
+
+        v = _mm512_extracti32x4_epi32(d, 2);
+        write_le32(out, offset + hash_size * 0, _mm_extract_epi32(v, 3));
+        write_le32(out, offset + hash_size * 1, _mm_extract_epi32(v, 2));
+        write_le32(out, offset + hash_size * 2, _mm_extract_epi32(v, 1));
+        write_le32(out, offset + hash_size * 3, _mm_extract_epi32(v, 0));
+        out += hash_size * 4;
+
+        v = _mm512_extracti32x4_epi32(d, 1);
+        write_le32(out, offset + hash_size * 0, _mm_extract_epi32(v, 3));
+        write_le32(out, offset + hash_size * 1, _mm_extract_epi32(v, 2));
+        write_le32(out, offset + hash_size * 2, _mm_extract_epi32(v, 1));
+        write_le32(out, offset + hash_size * 3, _mm_extract_epi32(v, 0));
+        out += hash_size * 4;
+
+        v = _mm512_extracti32x4_epi32(d, 0);
+        write_le32(out, offset + hash_size * 0, _mm_extract_epi32(v, 3));
+        write_le32(out, offset + hash_size * 1, _mm_extract_epi32(v, 2));
+        write_le32(out, offset + hash_size * 2, _mm_extract_epi32(v, 1));
+        write_le32(out, offset + hash_size * 3, _mm_extract_epi32(v, 0));
     }
 };
 

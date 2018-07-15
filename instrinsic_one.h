@@ -51,6 +51,12 @@ public:
     static inline void save(void *out, int offset, type v, size_t hash_size = 32) {
         write_be32(out, offset + hash_size * 0, v);
     }
+    static inline type load_le(const void *trunk, int offset) {
+        return read_le32(trunk, offset + 64 * 0);
+    }
+    static inline void save_le(void *out, int offset, type v, size_t hash_size = 32) {
+        write_le32(out, offset + hash_size * 0, v);
+    }
 };
 
 } // namespace fingera

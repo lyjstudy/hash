@@ -51,33 +51,33 @@ protected:
     }
 
     static inline type vector_f1(type x, type y, type z) {
-        return x ^ y ^ z;
-        //return vector_xor(x, y, z);
+        //return x ^ y ^ z;
+        return vector_xor(x, y, z);
     }
     static inline type vector_f2(type x, type y, type z) {
-        return (x & y) | (~x & z);
-        //return vector_or(vector_and(x, y), vector_andnot(x, z));
+        //return (x & y) | (~x & z);
+        return vector_or(vector_and(x, y), vector_andnot(x, z));
     }
     static inline type vector_f3(type x, type y, type z) {
-        return (x | ~y) ^ z;
-        //return vector_xor(vector_or(x, vector_xor(y, vector_mirror(0xFFFFFFFFul))), z);
+        //return (x | ~y) ^ z;
+        return vector_xor(vector_or(x, vector_xor(y, vector_mirror(0xFFFFFFFFul))), z);
     }
     static inline type vector_f4(type x, type y, type z) {
-        return (x & z) | (y & ~z);
-        //return vector_or(vector_and(x, z), vector_andnot(z, y));
+        //return (x & z) | (y & ~z);
+        return vector_or(vector_and(x, z), vector_andnot(z, y));
     }
     static inline type vector_f5(type x, type y, type z) {
-        return x ^ (y | ~z);
-        //return vector_xor(x, vector_or(y, vector_xor(z, vector_mirror(0xFFFFFFFFul))));
+        //return x ^ (y | ~z);
+        return vector_xor(x, vector_or(y, vector_xor(z, vector_mirror(0xFFFFFFFFul))));
     }
 
     template<int N>
-    static inline void round(type& a, type b, type& c, type d, type e, type f, type x, type k) {
+    static inline void round(type& a, type b, type& c, type d, type e, type f, type x, uint32_t k) {
         /*
             a = rol(a + f + x + k, r) + e;
             c = rol(c, 10);
         */
-        a = vector_add(vector_rol<N>(vector_add(a, f, x, k)));
+        a = vector_add(vector_rol<N>(vector_add(a, f, x, vector_mirror(k))), e);
         c = vector_rol<10>(c);
     }
 
@@ -133,11 +133,22 @@ public:
         type a2 = a1, b2 = b1, c2 = c1, d2 = d1, e2 = e1;
         type oa = a1, ob = b1, oc = c1, od = d1, oe = e1;
 
-        const type *w = (type*)block;
-        type w0 = w[0], w1 = w[1], w2 = w[2], w3 = w[3];
-        type w4 = w[4], w5 = w[5], w6 = w[6], w7 = w[7];
-        type w8 = w[8], w9 = w[9], w10 = w[10], w11 = w[11];
-        type w12 = w[12], w13 = w[13], w14 = w[14], w15 = w[15];
+        type w0 = Instrinsic::load_le(block, 4 * 0);
+        type w1 = Instrinsic::load_le(block, 4 * 1);
+        type w2 = Instrinsic::load_le(block, 4 * 2);
+        type w3 = Instrinsic::load_le(block, 4 * 3);
+        type w4 = Instrinsic::load_le(block, 4 * 4);
+        type w5 = Instrinsic::load_le(block, 4 * 5);
+        type w6 = Instrinsic::load_le(block, 4 * 6);
+        type w7 = Instrinsic::load_le(block, 4 * 7);
+        type w8 = Instrinsic::load_le(block, 4 * 8);
+        type w9 = Instrinsic::load_le(block, 4 * 9);
+        type w10 = Instrinsic::load_le(block, 4 * 10);
+        type w11 = Instrinsic::load_le(block, 4 * 11);
+        type w12 = Instrinsic::load_le(block, 4 * 12);
+        type w13 = Instrinsic::load_le(block, 4 * 13);
+        type w14 = Instrinsic::load_le(block, 4 * 14);
+        type w15 = Instrinsic::load_le(block, 4 * 15);
 
 #define __R11(a, b, c, d, e, f, g) R11<g>(a, b, c, d, e, f);
 #define __R21(a, b, c, d, e, f, g) R21<g>(a, b, c, d, e, f);
@@ -182,6 +193,7 @@ public:
         __R12(b2, c2, d2, e2, a2, w3, 12);
         __R11(a1, b1, c1, d1, e1, w15, 8);
         __R12(a2, b2, c2, d2, e2, w12, 6);
+
         __R21(e1, a1, b1, c1, d1, w7, 7);
         __R22(e2, a2, b2, c2, d2, w6, 9);
         __R21(d1, e1, a1, b1, c1, w4, 6);
@@ -214,6 +226,7 @@ public:
         __R22(a2, b2, c2, d2, e2, w1, 13);
         __R21(e1, a1, b1, c1, d1, w8, 12);
         __R22(e2, a2, b2, c2, d2, w2, 11);
+
         __R31(d1, e1, a1, b1, c1, w3, 11);
         __R32(d2, e2, a2, b2, c2, w15, 9);
         __R31(c1, d1, e1, a1, b1, w10, 13);
@@ -246,6 +259,7 @@ public:
         __R32(e2, a2, b2, c2, d2, w4, 7);
         __R31(d1, e1, a1, b1, c1, w12, 5);
         __R32(d2, e2, a2, b2, c2, w13, 5);
+
         __R41(c1, d1, e1, a1, b1, w1, 11);
         __R42(c2, d2, e2, a2, b2, w8, 15);
         __R41(b1, c1, d1, e1, a1, w9, 12);
@@ -278,6 +292,7 @@ public:
         __R42(d2, e2, a2, b2, c2, w10, 15);
         __R41(c1, d1, e1, a1, b1, w2, 12);
         __R42(c2, d2, e2, a2, b2, w14, 8);
+
         __R51(b1, c1, d1, e1, a1, w4, 9);
         __R52(b2, c2, d2, e2, a2, w12, 8);
         __R51(a1, b1, c1, d1, e1, w0, 15);
@@ -311,11 +326,12 @@ public:
         __R51(b1, c1, d1, e1, a1, w13, 6);
         __R52(b2, c2, d2, e2, a2, w11, 11);
 
-        a1 = ob + c1 + d2;
-        b1 = oc + d1 + e2;
-        c1 = od + e1 + a2;
-        d1 = oe + a1 + b2;
-        e1 = oa + b1 + c2;
+        auto at = a1, bt = b1;
+        a1 = vector_add(ob, c1, d2);
+        b1 = vector_add(oc, d1, e2);
+        c1 = vector_add(od, e1, a2);
+        d1 = vector_add(oe, at, b2);
+        e1 = vector_add(oa, bt, c2);
 
 #undef __R11
 #undef __R21
@@ -342,11 +358,11 @@ public:
             cur_block += 64 * way();
         }
 
-        Instrinsic::save(out,  0, a, 20);
-        Instrinsic::save(out,  4, b, 20);
-        Instrinsic::save(out,  8, c, 20);
-        Instrinsic::save(out, 12, d, 20);
-        Instrinsic::save(out, 16, e, 20);
+        Instrinsic::save_le(out,  0, a, 20);
+        Instrinsic::save_le(out,  4, b, 20);
+        Instrinsic::save_le(out,  8, c, 20);
+        Instrinsic::save_le(out, 12, d, 20);
+        Instrinsic::save_le(out, 16, e, 20);
     }
 };
 
