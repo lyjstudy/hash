@@ -3,6 +3,7 @@
 #include <cstring>
 #include <cmath>
 #include "sha256.h"
+#include "ripemd160.h"
 #include "instrinsic_sse4.h"
 #include "instrinsic_one.h"
 #include "instrinsic_two.h"
@@ -33,7 +34,19 @@ void fill_sha256_trunk(void *buffer, size_t way) {
     }
 }
 
+void add(int &out) {
+}
+
+template<typename ...Args>
+void add(int &out, int value, Args... rest) {
+    out += value;
+    add(out, rest...);
+}
+
 int main(int argc, char const *argv[]) {
+    int a;
+    add(a, 1, 2, 3, 4, 5);
+    printf("%d\n", a);
 
     // 1 路 one
     // 2 路 two

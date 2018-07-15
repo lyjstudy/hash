@@ -37,6 +37,10 @@ public:
     static inline type vector_shl(type x) {
         return x << N;
     }
+    template<int N>
+    static inline type vector_rol(type x) {
+        return (x << N) | (x >> (32 - N));
+    }
 
     static inline type load(const void *trunk, int offset) {
         return read_be32(trunk, offset + 64 * 0);

@@ -20,29 +20,18 @@ protected:
     static inline type vector_mirror(uint32_t x) {
         return Instrinsic::vector_mirror(x);
     }
-    static inline type vector_add(type x, type y) {
-        return Instrinsic::vector_add(x, y);
+
+    static inline type vector_add(type x) {
+        return x;
     }
-    static inline type vector_add(type x, type y, type z) {
-        return vector_add(vector_add(x, y), z);
-    }
-    static inline type vector_add(type x, type y, type z, type w) {
-        return vector_add(vector_add(x, y), vector_add(z, w));
-    }
-    static inline type vector_add(type x, type y, type z, type w, type v) {
-        return vector_add(vector_add(x, y, z), vector_add(w, v));
+    template<typename ...Args>
+    static inline type vector_add(type x, Args... rest) {
+        return Instrinsic::vector_add(x, vector_add(rest...));
     }
 
-    static inline type vector_inc(type &x, type y) {
-        x = vector_add(x, y);
-        return x;
-    }
-    static inline type vector_inc(type &x, type y, type z) {
-        x = vector_add(x, y, z);
-        return x;
-    }
-    static inline type vector_inc(type &x, type y, type z, type w) {
-        x = vector_add(x, y, z, w);
+    template<typename ...Args>
+    static inline type vector_inc(type &x, Args... rest) {
+        x = vector_add(x, rest...);
         return x;
     }
 
@@ -69,6 +58,10 @@ protected:
     static inline type vector_shl(type x) {
         return Instrinsic::template vector_shl<N>(x);
     }
+    template<int N>
+    static inline type vector_rol(type x) {
+        return Instrinsic::template vector_rol<N>(x);
+    }
 
     static inline type Ch(type x, type y, type z) {
         // z ^ (x & (y ^ z))
@@ -81,32 +74,32 @@ protected:
     static inline type Sigma0(type x) {
         // (x >> 2 | x << 30) ^ (x >> 13 | x << 19) ^ (x >> 22 | x << 10)
         return vector_xor(
-                vector_or(vector_shr<2>(x), vector_shl<30>(x)), 
-                vector_or(vector_shr<13>(x), vector_shl<19>(x)), 
-                vector_or(vector_shr<22>(x), vector_shl<10>(x))
+                vector_rol<30>(x),
+                vector_rol<19>(x), 
+                vector_rol<10>(x)
         );
     }
     static inline type Sigma1(type x) {
         // (x >> 6 | x << 26) ^ (x >> 11 | x << 21) ^ (x >> 25 | x << 7);
         return vector_xor(
-                vector_or(vector_shr<6>(x), vector_shl<26>(x)), 
-                vector_or(vector_shr<11>(x), vector_shl<21>(x)), 
-                vector_or(vector_shr<25>(x), vector_shl<7>(x))
+                vector_rol<26>(x),
+                vector_rol<21>(x),
+                vector_rol<7>(x)
         );
     }
     static inline type sigma0(type x) {
         // (x >> 7 | x << 25) ^ (x >> 18 | x << 14) ^ (x >> 3)
         return vector_xor(
-                vector_or(vector_shr<7>(x), vector_shl<25>(x)), 
-                vector_or(vector_shr<18>(x), vector_shl<14>(x)), 
+                vector_rol<25>(x),
+                vector_rol<14>(x),
                 vector_shr<3>(x)
         );
     }
     static inline type sigma1(type x) {
         // (x >> 17 | x << 15) ^ (x >> 19 | x << 13) ^ (x >> 10)
         return vector_xor(
-                vector_or(vector_shr<17>(x), vector_shl<15>(x)), 
-                vector_or(vector_shr<19>(x), vector_shl<13>(x)), 
+                vector_rol<15>(x),
+                vector_rol<13>(x),
                 vector_shr<10>(x)
         );
     }
@@ -216,6 +209,7 @@ public:
         round(c, d, e, f, g, h, a, b, vector_add(vector_mirror(0xbef9a3f7ul), vector_inc(w14, sigma1(w12), w7, sigma0(w15))));
         round(b, c, d, e, f, g, h, a, vector_add(vector_mirror(0xc67178f2ul), vector_inc(w15, sigma1(w13), w8, sigma0(w0))));
 
+        // FIXMEBUGBUG: add old abcdefgh
         a = vector_add(a, vector_mirror(0x6a09e667ul));
         b = vector_add(b, vector_mirror(0xbb67ae85ul));
         c = vector_add(c, vector_mirror(0x3c6ef372ul));

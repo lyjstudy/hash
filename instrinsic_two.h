@@ -53,6 +53,13 @@ public:
         *b2(&r) = *b2(&x) << N;
         return r;
     }
+    template<int N>
+    static inline type vector_rol(type x) {
+        uint64_t r;
+        *b1(&r) = (*b1(&x) << N) | (*b1(&x) >> (32 - N));
+        *b2(&r) = (*b2(&x) << N) | (*b2(&x) >> (32 - N));
+        return r;
+    }
 
     static inline type load(const void *trunk, int offset) {
         type first = read_be32(trunk, offset + 64 * 0);

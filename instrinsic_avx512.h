@@ -9,6 +9,8 @@
 #include <immintrin.h>
 #include "compact.h"
 
+// CPUID Flags: AVX512VL + AVX512F
+
 namespace fingera {
 
 class instrinsic_avx512 {
@@ -30,6 +32,9 @@ public:
     static inline type vector_and(type x, type y) {
         return _mm512_and_si512(x, y);
     }
+    static inline type vector_andnot(type x, type y) {
+        return _mm512_andnot_si512(x, y);
+    }
     template<int N>
     static inline type vector_shr(type x) {
         return _mm512_srli_epi32(x, N);
@@ -37,6 +42,12 @@ public:
     template<int N>
     static inline type vector_shl(type x) {
         return _mm512_slli_epi32(x, N);
+    }
+    template<int N>
+    static inline type vector_rol(type x) {
+        // CPUID Flags: AVX512VL + AVX512F
+        return _mm512_rol_epi32(x, N);
+        // return vector_or(vector_shl<N>(x), vector_shr<32 - N>(x));
     }
 
     static inline type load(const void *trunk, int offset) {
